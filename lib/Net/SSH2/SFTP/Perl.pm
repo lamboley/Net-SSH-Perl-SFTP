@@ -3,13 +3,15 @@ package Net::SSH2::SFTP::Perl;
 use strict;
 use warnings;
 
+our $VERSION  = '0.01'; 
+
 use parent qw[Net::SSH::Perl::SSH2];
 
 use Net::SSH2::SFTP::Perl::Buffer;
 use Net::SSH2::SFTP::Perl::Attributes;
-
+ 
 use Carp qw[croak];
-
+ 
 sub new {
     my ($class, $host, $user, $password, %p) = @_;
     
@@ -26,9 +28,9 @@ sub new {
 sub _initialize {
     my ($self, %p) = @_;
     
-    $self->{_msg_id} = 0;
+    $self->{_msg_id} = 0; 
 }
-
+ 
 sub stat {
     my($self, $remote) = @_;
 
@@ -315,3 +317,59 @@ sub new_msg_id {
 sub msg_id { $_[0]->{_msg_id}++ }
 
 1;
+__END__
+
+=head1 NAME
+
+Net::SSH2::SFTP::Perl - Add support of SFTP for Net::SSH::Perl
+
+=head1 SYNOPSIS
+
+    my $ssh = Net::SSH2::SFTP::Perl->new($host, $user, $password);
+
+    my ($out, $err, $ex) = $ssh->cmd('id');
+
+    $ssh->get('/home/lamboley/toto', 'C:\toto');
+
+    ($out, $err, $ex) = $ssh->cmd('ls');
+
+    if (my $a = $ssh->stat('/home/lamboley/toto2')) {
+        $ssh->get('/home/lamboley/toto2', 'C:\toto2', $a);
+    }
+
+=head1 DESCRIPTION
+
+Net::SH2::SFTP::Perl inherit from Net::SSH::Perl and implement SFTP command.
+Net::SFTP already implement SFTP through Net::SSH::Perl but doesn't allow us
+to do SSH command, because it is only a SFTP client.
+
+Actually, just the stat and get command are written.
+
+Net::SH2::SFTP::Perl is inspired/based on Net::SFTP.
+
+=head1 TODO
+
+* Rewrite for more flexibility
+
+* Implement the other SFTP fonction
+
+* Write test suite
+
+=head1 AUTHOR
+
+Lucas LAMBOLEY E<lt>lucaslamboley@outlook.comE<gt>
+
+=head1 COPYRIGHT
+
+Copyright 2019 Lucas LAMBOLEY
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+L<Net::SSH::Perl> L<Net::SFTP>
+
+=cut
