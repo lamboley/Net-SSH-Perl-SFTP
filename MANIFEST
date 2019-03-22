@@ -1,7 +1,7 @@
 Changes
 Makefile.PL
 MANIFEST
-README
+README.md
 lib/Net/SSH2/SFTP/Perl.pm
 lib/Net/SSH2/SFTP/Perl/Buffer.pm
 lib/Net/SSH2/SFTP/Perl/Attributes.pm
