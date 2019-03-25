@@ -28,7 +28,6 @@ Net::SH2::SFTP::Perl is inspired/based on Net::SFTP.
 
 * Rewrite for more flexibility
 * Implement the other SFTP fonction
-* Write test suite
 
 ## AUTHOR
 
