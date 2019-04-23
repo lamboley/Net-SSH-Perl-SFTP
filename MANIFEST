@@ -2,6 +2,6 @@ Changes
 Makefile.PL
 MANIFEST
 README.md
-lib/Net/SSH2/SFTP/Perl.pm
-lib/Net/SSH2/SFTP/Perl/Buffer.pm
-lib/Net/SSH2/SFTP/Perl/Attributes.pm
+lib/Net/SSH/Perl/SFTP.pm
+lib/Net/SSH/Perl/SFTP/Buffer.pm
+lib/Net/SSH/Perl/SFTP/Attributes.pm
