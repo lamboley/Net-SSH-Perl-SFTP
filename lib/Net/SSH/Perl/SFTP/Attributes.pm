@@ -1,9 +1,9 @@
-package Net::SSH2::SFTP::Perl::Attributes;
+package Net::SSH::Perl::SFTP::Attributes;
 
 use strict;
 use warnings;
 
-use Net::SSH2::SFTP::Perl::Buffer;
+use Net::SSH::Perl::SFTP::Buffer;
 
 our @FIELDS = qw[flags size uid gid perm atime mtime];
 
@@ -21,10 +21,10 @@ sub new {
 sub init {
     my ($a, %param) = @_;
     $a->{$_} = 0 for (@FIELDS);
-    
+
     if (my $buf = $param{Buffer}) {
         $a->{flags} = $buf->get_int32;
-        
+
         if ($a->{flags} & 0x01) {
             $a->{size} = $buf->get_int64;
         }
@@ -53,7 +53,7 @@ sub init {
 
 sub as_buffer {
     my $a = shift;
-    my $buf = Net::SSH2::SFTP::Perl::Buffer->new;
+    my $buf = Net::SSH::Perl::SFTP::Buffer->new;
     $buf->put_int32($a->{flags});
     if ($a->{flags} & 0x01) {
         $buf->put_int64(int $a->{size});
