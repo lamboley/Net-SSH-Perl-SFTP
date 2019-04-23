@@ -18,7 +18,7 @@ Net::SSH::Perl::SFTP - Add support of SFTP for Net::SSH::Perl
     
 ## DESCRIPTION
 
-NNet::SSH::Perl::SFTP inherit from Net::SSH::Perl and implement SFTP command. Net::SFTP already implement SFTP through Net::SSH::Perl but doesn't allow us to do SSH command, because it is only a SFTP client.
+Net::SSH::Perl::SFTP inherit from Net::SSH::Perl and implement SFTP command. Net::SFTP already implement SFTP through Net::SSH::Perl but doesn't allow us to do SSH command, because it is only a SFTP client.
 
 Actually, just the stat and get command are written.
 
