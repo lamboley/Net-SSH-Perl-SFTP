@@ -1,25 +1,25 @@
-package Net::SSH2::SFTP::Perl;
+package Net::SSH::Perl::SFTP;
 
 use strict;
 use warnings;
 
-our $VERSION  = '0.01'; 
+our $VERSION  = '0.01';
 
 use parent qw[Net::SSH::Perl::SSH2];
 
-use Net::SSH2::SFTP::Perl::Buffer;
-use Net::SSH2::SFTP::Perl::Attributes;
- 
+use Net::SSH::Perl::SFTP::Buffer;
+use Net::SSH::Perl::SFTP::Attributes;
+
 use Carp qw[croak];
- 
+
 sub new {
     my ($class, $host, $user, $password, %p) = @_;
-    
+
     $p{protocol} = 2;
-    
+
     my $self = $class->SUPER::new($host, %p);
     $self->login($user, $password);
-    
+
     bless $self, $class;
     $self->_initialize(%p);
     $self;
@@ -27,24 +27,24 @@ sub new {
 
 sub _initialize {
     my ($self, %p) = @_;
-    
-    $self->{_msg_id} = 0; 
+
+    $self->{_msg_id} = 0;
 }
- 
+
 sub stat {
     my($self, $remote) = @_;
 
     my ($channel, $incoming) = $self->_channel_subsystem_sftp;
-            
+
     my ($msg, $id);
     $msg = $self->new_msg(1);
     $msg->put_int32(3);
-    
-    my $b = Net::SSH2::SFTP::Perl::Buffer->new;
+
+    my $b = Net::SSH::Perl::SFTP::Buffer->new;
     $b->put_int32($msg->length);
     $b->append($msg->bytes);
     $channel->send_data($b->bytes);
-    
+
     my $len;
     unless ($incoming->length > 4) {
         $self->client_loop;
@@ -53,18 +53,18 @@ sub stat {
         croak "Received message too long $len" if $len > 256 * 1024;
         while ($incoming->length < $len) {$self->client_loop}
     }
-    
-    $msg = Net::SSH2::SFTP::Perl::Buffer->new;
+
+    $msg = Net::SSH::Perl::SFTP::Buffer->new;
     $msg->append($incoming->bytes(0, $len, ''));
-    
+
     my $type = $msg->get_int8;
     croak "Invalid packet back from SSH2_FXP_INIT (type $type)" if $type != 2;
 
     ($msg, $id) = $self->new_msg_id(17);
-    
+
     $msg->put_str($remote);
 
-    $b = Net::SSH2::SFTP::Perl::Buffer->new;
+    $b = Net::SSH::Perl::SFTP::Buffer->new;
     $b->put_int32($msg->length);
     $b->append($msg->bytes);
     $channel->send_data($b->bytes);
@@ -77,7 +77,7 @@ sub stat {
         while ($incoming->length < $len) {$self->client_loop}
     }
 
-    $msg = Net::SSH2::SFTP::Perl::Buffer->new;
+    $msg = Net::SSH::Perl::SFTP::Buffer->new;
     $msg->append($incoming->bytes(0, $len, ''));
 
     $type = $msg->get_int8;
@@ -104,7 +104,7 @@ sub get {
     local *FH;
     if ($local) {
         open FH, ">$local" or croak "Can't open $local: $!";
-        binmode FH or croak "Can't binmode FH: $!"; 
+        binmode FH or croak "Can't binmode FH: $!";
     }
 
     my ($channel, $incoming) = $self->_channel_subsystem_sftp;
@@ -113,7 +113,7 @@ sub get {
     $msg = $self->new_msg(1);
     $msg->put_int32(3);
 
-    my $b = Net::SSH2::SFTP::Perl::Buffer->new;
+    my $b = Net::SSH::Perl::SFTP::Buffer->new;
     $b->put_int32($msg->length);
     $b->append($msg->bytes);
     $channel->send_data($b->bytes);
@@ -127,7 +127,7 @@ sub get {
         while ($incoming->length < $len) { $self->client_loop }
     }
 
-    $msg = Net::SSH2::SFTP::Perl::Buffer->new;
+    $msg = Net::SSH::Perl::SFTP::Buffer->new;
     $msg->append($incoming->bytes(0, $len, ''));
 
     my $type = $msg->get_int8;
@@ -137,9 +137,9 @@ sub get {
 
     $msg->put_str($remote);
     $msg->put_int32(0x01);
-    $msg->put_attributes(Net::SSH2::SFTP::Perl::Attributes->new);
+    $msg->put_attributes(Net::SSH::Perl::SFTP::Attributes->new);
 
-    $b = Net::SSH2::SFTP::Perl::Buffer->new;
+    $b = Net::SSH::Perl::SFTP::Buffer->new;
     $b->put_int32($msg->length);
     $b->append($msg->bytes);
     $channel->send_data($b->bytes);
@@ -152,7 +152,7 @@ sub get {
         while ($incoming->length < $len) { $self->client_loop }
     }
 
-    $msg = Net::SSH2::SFTP::Perl::Buffer->new;
+    $msg = Net::SSH::Perl::SFTP::Buffer->new;
     $msg->append($incoming->bytes(0, $len, ''));
 
     $type = $msg->get_int8;
@@ -177,7 +177,7 @@ sub get {
         $msg->put_int64($offset);
         $msg->put_int32(65536);
 
-        $b = Net::SSH2::SFTP::Perl::Buffer->new;
+        $b = Net::SSH::Perl::SFTP::Buffer->new;
         $b->put_int32($msg->length);
         $b->append($msg->bytes);
         $channel->send_data($b->bytes);
@@ -190,7 +190,7 @@ sub get {
             while ($incoming->length < $len) { $self->client_loop }
         }
 
-        $msg = Net::SSH2::SFTP::Perl::Buffer->new;
+        $msg = Net::SSH::Perl::SFTP::Buffer->new;
         $msg->append($incoming->bytes(0, $len, ''));
 
         $type = $msg->get_int8;
@@ -208,7 +208,7 @@ sub get {
         elsif ($type != 103) { croak "Expected SSH2_FXP_DATA packet, got $type" }
 
         my $data = $msg->get_str;
-        
+
         last if defined $status && $status == 1;
         return unless $data;
 
@@ -221,7 +221,7 @@ sub get {
     ($msg, $id) = $self->new_msg_id(4);
     $msg->put_str($handle);
 
-    $b = Net::SSH2::SFTP::Perl::Buffer->new;
+    $b = Net::SSH::Perl::SFTP::Buffer->new;
     $b->put_int32($msg->length);
     $b->append($msg->bytes);
     $channel->send_data($b->bytes);
@@ -234,7 +234,7 @@ sub get {
         while ($incoming->length < $len) { $self->client_loop }
     }
 
-    $msg = Net::SSH2::SFTP::Perl::Buffer->new;
+    $msg = Net::SSH::Perl::SFTP::Buffer->new;
     $msg->append($incoming->bytes(0, $len, ''));
 
     $type = $msg->get_int8;
@@ -287,7 +287,7 @@ sub _channel_subsystem_sftp {
     $cmgr->register_handler(100, $subsystem_reply);
     $cmgr->register_handler(99, $subsystem_reply);
 
-    my $incoming = Net::SSH2::SFTP::Perl::Buffer->new;
+    my $incoming = Net::SSH::Perl::SFTP::Buffer->new;
     $channel->register_handler("_output_buffer", sub {
         my($c, $incomingfer) = @_;
         $incoming->append($incomingfer->bytes);
@@ -301,7 +301,7 @@ sub _channel_subsystem_sftp {
 
 sub new_msg {
     my($ssh, $code) = @_;
-    my $msg = Net::SSH2::SFTP::Perl::Buffer->new;
+    my $msg = Net::SSH::Perl::SFTP::Buffer->new;
     $msg->put_int8($code);
     $msg;
 }
@@ -321,11 +321,11 @@ __END__
 
 =head1 NAME
 
-Net::SSH2::SFTP::Perl - Add support of SFTP for Net::SSH::Perl
+Net::SSH::Perl::SFTP - Add support of SFTP for Net::SSH::Perl
 
 =head1 SYNOPSIS
 
-    my $ssh = Net::SSH2::SFTP::Perl->new($host, $user, $password);
+    my $ssh = Net::SSH::Perl::SFTP->new($host, $user, $password);
 
     my ($out, $err, $ex) = $ssh->cmd('id');
 
