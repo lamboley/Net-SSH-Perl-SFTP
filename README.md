@@ -7,15 +7,15 @@ Net::SSH::Perl::SFTP - Add support of SFTP for Net::SSH::Perl
     my $ssh = Net::SSH::Perl::SFTP->new($host, $user, $password);
 
     my ($out, $err, $ex) = $ssh->cmd('id');
-    
+
     $ssh->get('/home/lamboley/toto', 'C:\toto');
-    
+
     ($out, $err, $ex) = $ssh->cmd('ls');
-    
+
     if (my $a = $ssh->stat('/home/lamboley/toto2')) {
         $ssh->get('/home/lamboley/toto2', 'C:\toto2', $a);
     }
-    
+
 ## DESCRIPTION
 
 Net::SSH::Perl::SFTP inherit from Net::SSH::Perl and implement SFTP command. Net::SFTP already implement SFTP through Net::SSH::Perl but doesn't allow us to do SSH command, because it is only a SFTP client.
@@ -24,9 +24,6 @@ Actually, just the stat and get command are written.
 
 Net::SSH::Perl::SFTP is inspired/based on Net::SFTP.
 
-## TODO
-
-* Implement the other SFTP fonction
 
 ## AUTHOR
 
