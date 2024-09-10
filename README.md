@@ -31,7 +31,7 @@ Lucas LAMBOLEY <lucaslamboley@outlook.com>
 
 ## COPYRIGHT
 
-Copyright 2019 Lucas LAMBOLEY
+Copyright 2024 Lucas LAMBOLEY
 
 ## LICENSE
 
